@@ -45,6 +45,12 @@ DFA/:DFA[fa_]["TransitionFunction", "Table"] := TransitionFunction[fa]
 
 (******************************************************************************)
 
+State/:(h:(SameQ|Equal))[State[x_, y___], State[a_, b___]] := h[x, a]
+State/:MemberQ[l:{_State..}, a_State] := MemberQ[l[[All, 1]], a]
+State/:SubsetQ[l:{_State..}, a:{_State..}] := SubsetQ[l[[All, 1]], a[[All, 1]]]
+
+(******************************************************************************)
+
 DFA/:AutomataQ[_DFA] = True;
 NFA/:AutomataQ[_NFA] = True;
 AutomataQ[___] = False;
@@ -96,7 +102,6 @@ CreateTransitionFunction[d_, alph:{_String..}, Q:{_State..}] :=
 		Message[CreateTransitionFunction::INVform, d], 
 		Return[$Failed]
 	]
-CreateTransitionFunction[___] := $Failed
 
 (******************************************************************************)
 
@@ -104,8 +109,6 @@ CreateDFA::INVaccstate = "The accepting states `1` are not a subset of `2`.";
 CreateDFA::INVinitstate = "The starting state `1` is not a member of `2`.";
 CreateDFA[Q:{_State..}, alph:{_String..}, d_, q0_State, F:{_State..}] :=
 	CompoundExpression[
-		(*If[!DuplicateFreeQ[alph],Message[CreateDFA::duplicatemembers,alph]];
-		If[!DuplicateFreeQ[Q],Message[CreateDFA::duplicatemembers,Q]];*)
 		If[!SubsetQ[Q,F], Message[CreateDFA::INVaccstate, F, Q]; Return[$Failed]],
 		If[!MemberQ[Q, q0], Message[CreateDFA::INVinitstate, q0, Q]; Return[$Failed]],
 		With[{tfunc = CreateTransitionFunction[d, alph, Q]},
