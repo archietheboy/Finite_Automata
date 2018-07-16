@@ -45,9 +45,11 @@ DFA/:DFA[fa_]["TransitionFunction", "Table"] := TransitionFunction[fa]
 
 (******************************************************************************)
 
+Options[State] = {"StartingState" -> False, "AcceptingState" -> False};
 State/:(h:(SameQ|Equal))[State[x_, y___], State[a_, b___]] := h[x, a]
 State/:MemberQ[l:{_State..}, a_State] := MemberQ[l[[All, 1]], a]
 State/:SubsetQ[l:{_State..}, a:{_State..}] := SubsetQ[l[[All, 1]], a[[All, 1]]]
+State/:AutomataChangeOptions[State[x_, y___]] := SubsetQ[l[[All, 1]], a[[All, 1]]]
 
 (******************************************************************************)
 
